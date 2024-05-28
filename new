@@ -184,3 +184,191 @@ export default ResizableGrid;
   left: 50%;
   transform: translateX(-50%);
 }
+
+
+import React, { useState, useRef } from 'react';
+import './ResizableGrid.css';
+
+const ResizableGrid = () => {
+  const [sizes, setSizes] = useState({
+    topLeft: { width: 300, height: 300 },
+    topRight: { width: 300, height: 300 },
+    bottomLeft: { width: 300, height: 300 },
+    bottomRight: { width: 300, height: 300 },
+  });
+
+  const containerRef = useRef(null);
+
+  const handleMouseDown = (e, corner, direction) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startSizes = { ...sizes };
+
+    const onMouseMove = (event) => {
+      const deltaX = event.clientX - startX;
+      const deltaY = event.clientY - startY;
+
+      setSizes((prevSizes) => {
+        const newSizes = { ...prevSizes };
+
+        if (direction.includes('e')) {
+          newSizes[corner].width = startSizes[corner].width + deltaX;
+          if (corner === 'topLeft') newSizes.topRight.width = startSizes.topRight.width - deltaX;
+          if (corner === 'bottomLeft') newSizes.bottomRight.width = startSizes.bottomRight.width - deltaX;
+        }
+        if (direction.includes('s')) {
+          newSizes[corner].height = startSizes[corner].height + deltaY;
+          if (corner === 'topLeft') newSizes.bottomLeft.height = startSizes.bottomLeft.height - deltaY;
+          if (corner === 'topRight') newSizes.bottomRight.height = startSizes.bottomRight.height - deltaY;
+        }
+
+        if (direction.includes('w')) {
+          newSizes[corner].width = startSizes[corner].width - deltaX;
+          if (corner === 'topRight') newSizes.topLeft.width = startSizes.topLeft.width + deltaX;
+          if (corner === 'bottomRight') newSizes.bottomLeft.width = startSizes.bottomLeft.width + deltaX;
+        }
+        if (direction.includes('n')) {
+          newSizes[corner].height = startSizes[corner].height - deltaY;
+          if (corner === 'bottomLeft') newSizes.topLeft.height = startSizes.topLeft.height + deltaY;
+          if (corner === 'bottomRight') newSizes.topRight.height = startSizes.topRight.height + deltaY;
+        }
+
+        return newSizes;
+      });
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  return (
+    <div className="grid-container" ref={containerRef}>
+      <div className="box top-left" style={{ width: sizes.topLeft.width, height: sizes.topLeft.height }}>
+        <div className="content">Box 1</div>
+        <div className="resizer se" onMouseDown={(e) => handleMouseDown(e, 'topLeft', 'se')}></div>
+        <div className="resizer e" onMouseDown={(e) => handleMouseDown(e, 'topLeft', 'e')}></div>
+        <div className="resizer s" onMouseDown={(e) => handleMouseDown(e, 'topLeft', 's')}></div>
+      </div>
+      <div className="box top-right" style={{ width: sizes.topRight.width, height: sizes.topRight.height }}>
+        <div className="content">Box 2</div>
+        <div className="resizer sw" onMouseDown={(e) => handleMouseDown(e, 'topRight', 'sw')}></div>
+        <div className="resizer w" onMouseDown={(e) => handleMouseDown(e, 'topRight', 'w')}></div>
+        <div className="resizer s" onMouseDown={(e) => handleMouseDown(e, 'topRight', 's')}></div>
+      </div>
+      <div className="box bottom-left" style={{ width: sizes.bottomLeft.width, height: sizes.bottomLeft.height }}>
+        <div className="content">Box 3</div>
+        <div className="resizer ne" onMouseDown={(e) => handleMouseDown(e, 'bottomLeft', 'ne')}></div>
+        <div className="resizer e" onMouseDown={(e) => handleMouseDown(e, 'bottomLeft', 'e')}></div>
+        <div className="resizer n" onMouseDown={(e) => handleMouseDown(e, 'bottomLeft', 'n')}></div>
+      </div>
+      <div className="box bottom-right" style={{ width: sizes.bottomRight.width, height: sizes.bottomRight.height }}>
+        <div className="content">Box 4</div>
+        <div className="resizer nw" onMouseDown={(e) => handleMouseDown(e, 'bottomRight', 'nw')}></div>
+        <div className="resizer w" onMouseDown={(e) => handleMouseDown(e, 'bottomRight', 'w')}></div>
+        <div className="resizer n" onMouseDown={(e) => handleMouseDown(e, 'bottomRight', 'n')}></div>
+      </div>
+    </div>
+  );
+};
+
+export default ResizableGrid;
+
+.grid-container {
+  display: grid;
+  grid-template-rows: auto auto;
+  grid-template-columns: auto auto;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.box {
+  border: 1px solid #000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+  overflow: hidden;
+  box-sizing: border-box; /* Ensure borders are included in the width/height calculations */
+}
+
+.content {
+  padding: 10px;
+}
+
+.resizer {
+  width: 10px;
+  height: 10px;
+  background: #000;
+  position: absolute;
+  z-index: 10;
+}
+
+.se {
+  right: -5px;
+  bottom: -5px;
+  cursor: se-resize;
+}
+
+.sw {
+  left: -5px;
+  bottom: -5px;
+  cursor: sw-resize;
+}
+
+.ne {
+  right: -5px;
+  top: -5px;
+  cursor: ne-resize;
+}
+
+.nw {
+  left: -5px;
+  top: -5px;
+  cursor: nw-resize;
+}
+
+.e, .w, .n, .s {
+  background: transparent;
+  position: absolute;
+}
+
+.e, .w {
+  width: 10px;
+  cursor: ew-resize;
+}
+
+.e {
+  right: -5px;
+  top: 0;
+  bottom: 0;
+}
+
+.w {
+  left: -5px;
+  top: 0;
+  bottom: 0;
+}
+
+.n, .s {
+  height: 10px;
+  cursor: ns-resize;
+}
+
+.n {
+  top: -5px;
+  left: 0;
+  right: 0;
+}
+
+.s {
+  bottom: -5px;
+  left: 0;
+  right: 0;
+}
