@@ -116,3 +116,66 @@ export default ResizableGrid;
   top: -5px;
   cursor: nw-resize;
 }
+
+import React, { useState, useRef } from 'react';
+import './ResizableGrid.css';
+
+const ResizableGrid = () => {
+  const [sizes, setSizes] = useState({
+    topLeft: { width: 300, height: 300 },
+    topRight: { width: 300, height: 300 },
+    bottomLeft: { width: 300, height: 300 },
+    bottomRight: { width: 300, height: 300 },
+  });
+
+  const containerRef = useRef(null);
+
+  const handleMouseDown = (e, corner, direction) => {
+    e.preventDefault();
+    const startX = e.clientX;
+    const startY = e.clientY;
+    const startWidth = sizes[corner].width;
+    const startHeight = sizes[corner].height;
+
+    const onMouseMove = (event) => {
+      const newWidth = startWidth + (direction.includes('e') ? event.clientX - startX : startX - event.clientX);
+      const newHeight = startHeight + (direction.includes('s') ? event.clientY - startY : startY - event.clientY);
+
+      setSizes((prevSizes) => ({
+        ...prevSizes,
+        [corner]: { width: newWidth, height: newHeight },
+      }));
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  return (
+    <div className="grid-container" ref={containerRef}>
+      <div className="box top-left" style={{ width: sizes.topLeft.width, height: sizes.topLeft.height }}>
+        <div className="content">Box 1</div>
+        <div className="resizer se" onMouseDown={(e) => handleMouseDown(e, 'topLeft', 'se')}></div>
+      </div>
+      <div className="box top-right" style={{ width: sizes.topRight.width, height: sizes.topRight.height }}>
+        <div className="content">Box 2</div>
+        <div className="resizer sw" onMouseDown={(e) => handleMouseDown(e, 'topRight', 'sw')}></div>
+      </div>
+      <div className="box bottom-left" style={{ width: sizes.bottomLeft.width, height: sizes.bottomLeft.height }}>
+        <div className="content">Box 3</div>
+        <div className="resizer ne" onMouseDown={(e) => handleMouseDown(e, 'bottomLeft', 'ne')}></div>
+      </div>
+      <div className="box bottom-right" style={{ width: sizes.bottomRight.width, height: sizes.bottomRight.height }}>
+        <div className="content">Box 4</div>
+        <div className="resizer nw" onMouseDown={(e) => handleMouseDown(e, 'bottomRight', 'nw')}></div>
+      </div>
+    </div>
+  );
+};
+
+export default ResizableGrid;
