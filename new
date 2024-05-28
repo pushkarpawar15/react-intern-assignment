@@ -1,63 +1,72 @@
-import React from 'react';
-import { ResizableBox } from 'react-resizable';
-import 'react-resizable/css/styles.css';
+import React, { useState } from 'react';
 import './ResizableGrid.css';
 
 const ResizableGrid = () => {
+  const [sizes, setSizes] = useState({
+    topLeft: { width: 300, height: 300 },
+    topRight: { width: 300, height: 300 },
+    bottomLeft: { width: 300, height: 300 },
+    bottomRight: { width: 300, height: 300 },
+  });
+
+  const handleResize = (corner, size) => {
+    setSizes((prevSizes) => ({
+      ...prevSizes,
+      [corner]: size,
+    }));
+  };
+
   return (
     <div className="grid-container">
-      <ResizableBox
-        className="box"
-        width={300}
-        height={300}
-        minConstraints={[100, 100]}
-        maxConstraints={[500, 500]}
-        resizeHandles={['se']}
-      >
+      <div className="box top-left" style={{ width: sizes.topLeft.width, height: sizes.topLeft.height }}>
         <div className="content">Box 1</div>
-      </ResizableBox>
-      <ResizableBox
-        className="box"
-        width={300}
-        height={300}
-        minConstraints={[100, 100]}
-        maxConstraints={[500, 500]}
-        resizeHandles={['sw']}
-      >
+        <div className="resizer se" onMouseDown={(e) => handleMouseDown(e, 'topLeft', 'se')}></div>
+      </div>
+      <div className="box top-right" style={{ width: sizes.topRight.width, height: sizes.topRight.height }}>
         <div className="content">Box 2</div>
-      </ResizableBox>
-      <ResizableBox
-        className="box"
-        width={300}
-        height={300}
-        minConstraints={[100, 100]}
-        maxConstraints={[500, 500]}
-        resizeHandles={['ne']}
-      >
+        <div className="resizer sw" onMouseDown={(e) => handleMouseDown(e, 'topRight', 'sw')}></div>
+      </div>
+      <div className="box bottom-left" style={{ width: sizes.bottomLeft.width, height: sizes.bottomLeft.height }}>
         <div className="content">Box 3</div>
-      </ResizableBox>
-      <ResizableBox
-        className="box"
-        width={300}
-        height={300}
-        minConstraints={[100, 100]}
-        maxConstraints={[500, 500]}
-        resizeHandles={['nw']}
-      >
+        <div className="resizer ne" onMouseDown={(e) => handleMouseDown(e, 'bottomLeft', 'ne')}></div>
+      </div>
+      <div className="box bottom-right" style={{ width: sizes.bottomRight.width, height: sizes.bottomRight.height }}>
         <div className="content">Box 4</div>
-      </ResizableBox>
+        <div className="resizer nw" onMouseDown={(e) => handleMouseDown(e, 'bottomRight', 'nw')}></div>
+      </div>
     </div>
   );
+};
+
+const handleMouseDown = (e, corner, direction) => {
+  e.preventDefault();
+  const startX = e.clientX;
+  const startY = e.clientY;
+  const startWidth = e.target.parentElement.offsetWidth;
+  const startHeight = e.target.parentElement.offsetHeight;
+
+  const onMouseMove = (event) => {
+    const newWidth = startWidth + (direction.includes('e') ? event.clientX - startX : startX - event.clientX);
+    const newHeight = startHeight + (direction.includes('s') ? event.clientY - startY : startY - event.clientY);
+
+    handleResize(corner, { width: newWidth, height: newHeight });
+  };
+
+  const onMouseUp = () => {
+    document.removeEventListener('mousemove', onMouseMove);
+    document.removeEventListener('mouseup', onMouseUp);
+  };
+
+  document.addEventListener('mousemove', onMouseMove);
+  document.addEventListener('mouseup', onMouseUp);
 };
 
 export default ResizableGrid;
 
 
-
 .grid-container {
-  display: grid;
-  grid-template-rows: 1fr 1fr;
-  grid-template-columns: 1fr 1fr;
+  display: flex;
+  flex-wrap: wrap;
   width: 100vw;
   height: 100vh;
   position: relative;
@@ -68,6 +77,7 @@ export default ResizableGrid;
   display: flex;
   align-items: center;
   justify-content: center;
+  position: relative;
   overflow: hidden;
 }
 
@@ -75,6 +85,34 @@ export default ResizableGrid;
   padding: 10px;
 }
 
-.react-resizable {
+.resizer {
+  width: 10px;
+  height: 10px;
+  background: #000;
   position: absolute;
+  z-index: 10;
+}
+
+.se {
+  right: -5px;
+  bottom: -5px;
+  cursor: se-resize;
+}
+
+.sw {
+  left: -5px;
+  bottom: -5px;
+  cursor: sw-resize;
+}
+
+.ne {
+  right: -5px;
+  top: -5px;
+  cursor: ne-resize;
+}
+
+.nw {
+  left: -5px;
+  top: -5px;
+  cursor: nw-resize;
 }
