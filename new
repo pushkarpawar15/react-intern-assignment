@@ -1,44 +1,48 @@
 import React from 'react';
 import { ResizableBox } from 'react-resizable';
 import 'react-resizable/css/styles.css';
-import './App.css';
+import './ResizableGrid.css';
 
-const ResizableBoxes = () => {
+const ResizableGrid = () => {
   return (
-    <div className="container">
+    <div className="grid-container">
       <ResizableBox
         className="box"
-        width={200}
-        height={200}
+        width={300}
+        height={300}
         minConstraints={[100, 100]}
-        maxConstraints={[300, 300]}
+        maxConstraints={[500, 500]}
+        resizeHandles={['se']}
       >
         <div className="content">Box 1</div>
       </ResizableBox>
       <ResizableBox
         className="box"
-        width={200}
-        height={200}
+        width={300}
+        height={300}
         minConstraints={[100, 100]}
-        maxConstraints={[300, 300]}
+        maxConstraints={[500, 500]}
+        resizeHandles={['sw']}
       >
         <div className="content">Box 2</div>
       </ResizableBox>
       <ResizableBox
         className="box"
-        width={200}
-        height={200}
+        width={300}
+        height={300}
         minConstraints={[100, 100]}
-        maxConstraints={[300, 300]}
+        maxConstraints={[500, 500]}
+        resizeHandles={['ne']}
       >
         <div className="content">Box 3</div>
       </ResizableBox>
       <ResizableBox
         className="box"
-        width={200}
-        height={200}
+        width={300}
+        height={300}
         minConstraints={[100, 100]}
-        maxConstraints={[300, 300]}
+        maxConstraints={[500, 500]}
+        resizeHandles={['nw']}
       >
         <div className="content">Box 4</div>
       </ResizableBox>
@@ -46,15 +50,17 @@ const ResizableBoxes = () => {
   );
 };
 
-export default ResizableBoxes;
+export default ResizableGrid;
 
 
-.container {
-  display: flex;
-  flex-wrap: wrap;
-  width: 100%;
+
+.grid-container {
+  display: grid;
+  grid-template-rows: 1fr 1fr;
+  grid-template-columns: 1fr 1fr;
+  width: 100vw;
   height: 100vh;
-  gap: 5px;
+  position: relative;
 }
 
 .box {
@@ -63,9 +69,12 @@ export default ResizableBoxes;
   align-items: center;
   justify-content: center;
   overflow: hidden;
-  position: relative;
 }
 
 .content {
   padding: 10px;
+}
+
+.react-resizable {
+  position: absolute;
 }
