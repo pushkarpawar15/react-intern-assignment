@@ -4,24 +4,38 @@ import './ResizablePartition.css';
 const ResizablePartition = () => {
   const [leftWidth, setLeftWidth] = useState(300); // Initial width of the left section
   const containerRef = useRef(null);
+  const isResizing = useRef(false);
 
   const handleMouseDown = (e) => {
     e.preventDefault();
-    const startX = e.clientX;
-
-    const onMouseMove = (event) => {
-      const deltaX = event.clientX - startX;
-      setLeftWidth((prevWidth) => prevWidth + deltaX);
-    };
-
-    const onMouseUp = () => {
-      document.removeEventListener('mousemove', onMouseMove);
-      document.removeEventListener('mouseup', onMouseUp);
-    };
-
-    document.addEventListener('mousemove', onMouseMove);
-    document.addEventListener('mouseup', onMouseUp);
+    isResizing.current = true;
   };
+
+  const handleMouseMove = (e) => {
+    if (!isResizing.current) return;
+
+    const container = containerRef.current;
+    const containerRect = container.getBoundingClientRect();
+    const newLeftWidth = e.clientX - containerRect.left;
+
+    setLeftWidth(newLeftWidth);
+  };
+
+  const handleMouseUp = () => {
+    if (isResizing.current) {
+      isResizing.current = false;
+    }
+  };
+
+  React.useEffect(() => {
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, []);
 
   return (
     <div className="container" ref={containerRef}>
@@ -59,6 +73,8 @@ export default ResizablePartition;
   flex-grow: 1; /* Ensure the right section takes up the remaining space */
   position: absolute;
   right: 0;
+  top: 0;
+  bottom: 0;
 }
 
 .content {
@@ -73,4 +89,5 @@ export default ResizablePartition;
   height: 100%;
   z-index: 10;
   left: calc(300px - 5px); /* Initial left position based on initial width */
+  top: 0;
 }
