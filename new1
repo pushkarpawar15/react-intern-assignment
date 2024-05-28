@@ -1,0 +1,76 @@
+import React, { useState, useRef } from 'react';
+import './ResizablePartition.css';
+
+const ResizablePartition = () => {
+  const [leftWidth, setLeftWidth] = useState(300); // Initial width of the left section
+  const containerRef = useRef(null);
+
+  const handleMouseDown = (e) => {
+    e.preventDefault();
+    const startX = e.clientX;
+
+    const onMouseMove = (event) => {
+      const deltaX = event.clientX - startX;
+      setLeftWidth((prevWidth) => prevWidth + deltaX);
+    };
+
+    const onMouseUp = () => {
+      document.removeEventListener('mousemove', onMouseMove);
+      document.removeEventListener('mouseup', onMouseUp);
+    };
+
+    document.addEventListener('mousemove', onMouseMove);
+    document.addEventListener('mouseup', onMouseUp);
+  };
+
+  return (
+    <div className="container" ref={containerRef}>
+      <div className="left" style={{ width: leftWidth }}>
+        <div className="content">Left Section</div>
+      </div>
+      <div className="resizer" onMouseDown={handleMouseDown}></div>
+      <div className="right" style={{ left: leftWidth }}>
+        <div className="content">Right Section</div>
+      </div>
+    </div>
+  );
+};
+
+export default ResizablePartition;
+
+.container {
+  display: flex;
+  width: 100vw;
+  height: 100vh;
+  position: relative;
+}
+
+.left, .right {
+  height: 100%;
+  overflow: hidden;
+}
+
+.left {
+  background-color: lightblue;
+}
+
+.right {
+  background-color: lightgreen;
+  flex-grow: 1; /* Ensure the right section takes up the remaining space */
+  position: absolute;
+  right: 0;
+}
+
+.content {
+  padding: 10px;
+}
+
+.resizer {
+  width: 10px;
+  cursor: ew-resize;
+  background-color: #000;
+  position: absolute;
+  height: 100%;
+  z-index: 10;
+  left: calc(300px - 5px); /* Initial left position based on initial width */
+}
