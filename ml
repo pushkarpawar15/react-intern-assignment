@@ -46,3 +46,44 @@ df['MACD'], df['MACD_Signal'], df['MACD_Hist'] = calculate_macd(df)
 df['VAMP'] = calculate_vamp(df)
 
 print(df)
+
+
+
+
+
+import pandas as pd
+import numpy as np
+
+# Create a sample DataFrame
+data = {
+    'Gmt time': pd.date_range(start='2022-01-01', periods=30, freq='D'),
+    'open': np.random.rand(30) * 100,
+    'close': np.random.rand(30) * 100,
+    'high': np.random.rand(30) * 100,
+    'low': np.random.rand(30) * 100,
+    'volume': np.random.randint(1, 1000, 30)
+}
+
+df = pd.DataFrame(data)
+
+# Function to calculate the weighted average of the next 6 closing prices
+def weighted_average_next_n(df, column='close', n=6):
+    weights = np.arange(1, n + 1)
+    weighted_avg = []
+    
+    for i in range(len(df)):
+        if i + n < len(df):
+            window = df[column].iloc[i + 1:i + n + 1]
+            weighted_avg.append(np.average(window, weights=weights))
+        else:
+            weighted_avg.append(np.nan)
+    
+    return pd.Series(weighted_avg, index=df.index)
+
+# Calculate the weighted average of the next 6 closing prices
+df['Weighted_Avg_Next_6'] = weighted_average_next_n(df)
+
+# Create the 'buy' column
+df['buy'] = np.where(df['Weighted_Avg_Next_6'] > df['close'], 1, 0)
+
+print(df[['Gmt time', 'close', 'Weighted_Avg_Next_6', 'buy']])
