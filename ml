@@ -87,3 +87,33 @@ df['Weighted_Avg_Next_6'] = weighted_average_next_n(df)
 df['buy'] = np.where(df['Weighted_Avg_Next_6'] > df['close'], 1, 0)
 
 print(df[['Gmt time', 'close', 'Weighted_Avg_Next_6', 'buy']])
+
+
+
+
+# Handle NaN values by forward filling
+df.fillna(method='ffill', inplace=True)
+df.fillna(method='bfill', inplace=True)
+
+# Prepare data for logistic regression
+features = ['RSI', 'MACD', 'MACD_Signal', 'MACD_Hist', 'VAMP']
+X = df[features]
+y = df['buy']
+
+# Split the data into training and testing sets
+X_train, X_test, y_train, y_test = train_test_split(X, y, test_size=0.2, random_state=42)
+
+# Train the logistic regression model
+model = LogisticRegression()
+model.fit(X_train, y_train)
+
+# Make predictions
+y_pred = model.predict(X_test)
+
+# Evaluate the model
+accuracy = accuracy_score(y_test, y_pred)
+report = classification_report(y_test, y_pred)
+
+print(f"Accuracy: {accuracy}")
+print("Classification Report:")
+print(report)
