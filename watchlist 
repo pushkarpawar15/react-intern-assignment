@@ -11,45 +11,43 @@ const Watchlist = () => {
   ];
 
   return (
-    <div className="container mx-auto p-4">
-      <div className="overflow-x-auto">
-        <table className="min-w-full bg-white border border-gray-200">
-          <thead>
-            <tr>
-              <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Stock
-              </th>
-              <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Last
-              </th>
-              <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Change
-              </th>
-              <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
-                Change %
-              </th>
+    <div className="w-full overflow-x-auto">
+      <table className="min-w-full bg-white border border-gray-200">
+        <thead>
+          <tr>
+            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Stock
+            </th>
+            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Last
+            </th>
+            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Change
+            </th>
+            <th className="px-6 py-3 border-b-2 border-gray-200 bg-gray-50 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+              Change %
+            </th>
+          </tr>
+        </thead>
+        <tbody>
+          {stocks.map((stock, index) => (
+            <tr key={index} className="bg-white border-b border-gray-200">
+              <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
+                {stock.name}
+              </td>
+              <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
+                {stock.last.toFixed(2)}
+              </td>
+              <td className={`px-6 py-4 whitespace-nowrap text-sm ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {stock.change.toFixed(2)}
+              </td>
+              <td className={`px-6 py-4 whitespace-nowrap text-sm ${stock.changePercent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
+                {stock.changePercent.toFixed(2)}%
+              </td>
             </tr>
-          </thead>
-          <tbody>
-            {stocks.map((stock, index) => (
-              <tr key={index} className="bg-white border-b border-gray-200">
-                <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {stock.name}
-                </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                  {stock.last.toFixed(2)}
-                </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-sm ${stock.change >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {stock.change.toFixed(2)}
-                </td>
-                <td className={`px-6 py-4 whitespace-nowrap text-sm ${stock.changePercent >= 0 ? 'text-green-500' : 'text-red-500'}`}>
-                  {stock.changePercent.toFixed(2)}%
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 };
