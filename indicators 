@@ -1,0 +1,66 @@
+super trend 
+def calculate_supertrend(df, period=7, multiplier=3):
+    hl2 = (df['high'] + df['low']) / 2
+    df['ATR'] = df['high'].rolling(window=period).max() - df['low'].rolling(window=period).min()
+    df['Upper Band'] = hl2 + (multiplier * df['ATR'])
+    df['Lower Band'] = hl2 - (multiplier * df['ATR'])
+    df['in_uptrend'] = True
+    
+    for current in range(1, len(df.index)):
+        previous = current - 1
+        if df['close'][current] > df['Upper Band'][previous]:
+            df['in_uptrend'][current] = True
+        elif df['close'][current] < df['Lower Band'][previous]:
+            df['in_uptrend'][current] = False
+        else:
+            df['in_uptrend'][current] = df['in_uptrend'][previous]
+            if df['in_uptrend'][current] and df['Lower Band'][current] < df['Lower Band'][previous]:
+                df['Lower Band'][current] = df['Lower Band'][previous]
+            if not df['in_uptrend'][current] and df['Upper Band'][current] > df['Upper Band'][previous]:
+                df['Upper Band'][current] = df['Upper Band'][previous]
+
+    df['Supertrend'] = np.where(df['in_uptrend'], df['Lower Band'], df['Upper Band'])
+    return df['Supertrend']
+
+stochastic oscillator 
+
+def calculate_stochastic(df, period=14):
+    df['L14'] = df['low'].rolling(window=period).min()
+    df['H14'] = df['high'].rolling(window=period).max()
+    df['%K'] = 100 * ((df['close'] - df['L14']) / (df['H14'] - df['L14']))
+    df['%D'] = df['%K'].rolling(window=3).mean()
+    return df['%K'], df['%D']
+
+adx
+def calculate_adx(df, period=14):
+    df['TR'] = df[['high', 'low', 'close']].diff().abs().max(axis=1)
+    df['DM+'] = np.where((df['high'] - df['high'].shift(1)) > (df['low'].shift(1) - df['low']), df['high'] - df['high'].shift(1), 0)
+    df['DM-'] = np.where((df['low'].shift(1) - df['low']) > (df['high'] - df['high'].shift(1)), df['low'].shift(1) - df['low'], 0)
+    df['TR'] = df['TR'].rolling(window=period).sum()
+    df['DM+'] = df['DM+'].rolling(window=period).sum()
+    df['DM-'] = df['DM-'].rolling(window=period).sum()
+    df['DI+'] = 100 * (df['DM+'] / df['TR'])
+    df['DI-'] = 100 * (df['DM-'] / df['TR'])
+    df['DX'] = 100 * (abs(df['DI+'] - df['DI-']) / (df['DI+'] + df['DI-']))
+    df['ADX'] = df['DX'].rolling(window=period).mean()
+    return df['ADX']
+
+
+OBV
+def calculate_obv(df):
+    df['OBV'] = (np.sign(df['close'].diff()) * df['volume']).fillna(0).cumsum()
+    return df['OBV']
+
+
+def calculate_donchian_channel(df, period=20):
+    df['Donchian_High'] = df['high'].rolling(window=period).max()
+    df['Donchian_Low'] = df['low'].rolling(window=period).min()
+    return df['Donchian_High'], df['Donchian_Low']
+
+
+# Calculate indicators and add to DataFrame
+df['Supertrend'] = calculate_supertrend(df)
+df['%K'], df['%D'] = calculate_stochastic(df)
+df['ADX'] = calculate_adx(df)
+df['OBV'] = calculate_obv(df)
+df['Donchian_High'], df['Donchian_Low'] = calculate_donchian_channel(df)
