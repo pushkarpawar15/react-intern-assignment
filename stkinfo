@@ -1,0 +1,46 @@
+// src/components/StockInfo.js
+
+import React from 'react';
+
+const StockInfo = () => {
+  const stockData = {
+    name: 'AAPL',
+    last: 145.09,
+    change: 1.25,
+    changePercent: 0.87,
+  };
+
+  return (
+    <div className="p-4 bg-white border border-gray-200 rounded-lg shadow-md w-full h-full">
+      <h3 className="text-xl font-semibold mb-2">{stockData.name}</h3>
+      <div className="text-gray-700">
+        <p>
+          Last Price:{' '}
+          <span className="font-medium">{stockData.last.toFixed(2)}</span>
+        </p>
+        <p>
+          Change:{' '}
+          <span
+            className={`font-medium ${
+              stockData.change >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}
+          >
+            {stockData.change.toFixed(2)}
+          </span>
+        </p>
+        <p>
+          Change %:{' '}
+          <span
+            className={`font-medium ${
+              stockData.changePercent >= 0 ? 'text-green-500' : 'text-red-500'
+            }`}
+          >
+            {stockData.changePercent.toFixed(2)}%
+          </span>
+        </p>
+      </div>
+    </div>
+  );
+};
+
+export default StockInfo;
