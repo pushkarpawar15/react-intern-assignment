@@ -1,0 +1,50 @@
+// HistogramChart.js
+import React, { useEffect, useRef } from 'react';
+import { createChart } from 'lightweight-charts';
+
+const HistogramChart = () => {
+  const chartContainerRef = useRef();
+
+  useEffect(() => {
+    const chart = createChart(chartContainerRef.current, { width: 800, height: 600 });
+    
+    chart.applyOptions({
+      layout: {
+        backgroundColor: '#ffffff',
+        textColor: '#000',
+      },
+      grid: {
+        vertLines: {
+          color: '#eee',
+        },
+        horzLines: {
+          color: '#eee',
+        },
+      },
+    });
+
+    const histogramSeries = chart.addHistogramSeries({
+      color: '#26a69a',
+      priceFormat: {
+        type: 'volume',
+      },
+      priceScaleId: '',
+    });
+
+    const histogramData = [
+      { time: '2021-10-19', value: 34, color: '#26a69a' },
+      { time: '2021-10-20', value: 41, color: '#26a69a' },
+      { time: '2021-10-21', value: 38, color: '#26a69a' },
+      { time: '2021-10-22', value: 45, color: '#26a69a' },
+      // Add more data points here
+    ];
+
+    histogramSeries.setData(histogramData);
+
+    return () => chart.remove();
+  }, []);
+
+  return <div ref={chartContainerRef} />;
+};
+
+export default HistogramChart;
