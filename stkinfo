@@ -1,31 +1,42 @@
-// src/components/StockInfo.js
-
 import React from 'react';
+import './StockInfo.css';
 
 const StockInfo = () => {
-  const stockData = {
-    name: 'AAPL',
-    last: 145.09,
-    change: 1.25,
-    changePercent: 0.87,
-  };
+    const stockData = {
+        name: "ABC Corp",
+        currentPrice: "$123.45",
+        volume: "1.5M",
+        marketCap: "$50B",
+        high52Week: "$150.00",
+        low52Week: "$100.00"
+    };
 
-  return (
-    <div className="p-6 bg-white border border-gray-300 rounded-lg shadow-lg w-full h-full hover:shadow-xl transition-shadow duration-300 ease-in-out">
-      <h3 className="text-2xl font-bold mb-4 text-gray-900">{stockData.name}</h3>
-      <div className="text-gray-700">
-        <p className="mb-2">
-          Last Price: <span className="font-semibold text-gray-900">{stockData.last.toFixed(2)}</span>
-        </p>
-        <p className="mb-2">
-          Change: <span className={`font-semibold ${stockData.change >= 0 ? 'text-green-600' : 'text-red-600'}`}>{stockData.change.toFixed(2)}</span>
-        </p>
-        <p className="mb-2">
-          Change %: <span className={`font-semibold ${stockData.changePercent >= 0 ? 'text-green-600' : 'text-red-600'}`}>{stockData.changePercent.toFixed(2)}%</span>
-        </p>
-      </div>
-    </div>
-  );
-};
+    return (
+        <div className="stock-info">
+            <h2 className="stock-name">{stockData.name}</h2>
+            <div className="current-price">{stockData.currentPrice}</div>
+            <div className="key-stats">
+                <div className="stat">
+                    <span className="stat-label">Volume:</span>
+                    <span className="stat-value">{stockData.volume}</span>
+                </div>
+                <div className="stat">
+                    <span className="stat-label">Market Cap:</span>
+                    <span className="stat-value">{stockData.marketCap}</span>
+                </div>
+            </div>
+            <div className="price-ranges">
+                <div className="range">
+                    <span className="range-label">52-Week High:</span>
+                    <span className="range-value">{stockData.high52Week}</span>
+                </div>
+                <div className="range">
+                    <span className="range-label">52-Week Low:</span>
+                    <span className="range-value">{stockData.low52Week}</span>
+                </div>
+            </div>
+        </div>
+    );
+}
 
 export default StockInfo;
