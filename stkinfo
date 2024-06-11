@@ -40,3 +40,59 @@ const StockInfo = () => {
 }
 
 export default StockInfo;
+
+
+
+
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+}
+
+.stock-info {
+    background-color: #ffffff;
+    border-radius: 10px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+    width: 300px;
+    text-align: center;
+}
+
+.stock-name {
+    font-size: 24px;
+    margin: 0 0 10px;
+    color: #333333;
+}
+
+.current-price {
+    font-size: 32px;
+    color: #2a9d8f;
+    margin: 10px 0;
+}
+
+.key-stats, .price-ranges {
+    margin: 15px 0;
+    text-align: left;
+}
+
+.stat, .range {
+    display: flex;
+    justify-content: space-between;
+    padding: 5px 0;
+    font-size: 16px;
+}
+
+.stat-label, .range-label {
+    color: #555555;
+}
+
+.stat-value, .range-value {
+    color: #111111;
+    font-weight: bold;
+}
