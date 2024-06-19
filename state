@@ -1,0 +1,5 @@
+setCloseVals((prevCloseVals) => ({
+        ...prevCloseVals,
+        [companyId]: prevCloseVals[companyId] ? [...prevCloseVals[companyId], closeVal] : [closeVal],
+      }));
+    });
