@@ -1,0 +1,70 @@
+import React, { useState } from 'react';
+
+const DateTimeRangePicker = () => {
+    const [startDateTime, setStartDateTime] = useState('');
+    const [endDateTime, setEndDateTime] = useState('');
+
+    const handleSubmit = (event) => {
+        event.preventDefault();
+        alert(`Selected Date-Time Range: \nStart: ${startDateTime} \nEnd: ${endDateTime}`);
+    };
+
+    const containerStyle = {
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: '100vh',
+        backgroundColor: '#f0f0f0',
+        color: '#333',
+        fontFamily: 'Arial, sans-serif',
+    };
+
+    const inputStyle = {
+        margin: '10px 0',
+        padding: '10px',
+        borderRadius: '5px',
+        border: '1px solid #ccc',
+    };
+
+    const buttonStyle = {
+        padding: '10px 20px',
+        borderRadius: '5px',
+        border: 'none',
+        backgroundColor: '#007bff',
+        color: '#fff',
+        cursor: 'pointer',
+    };
+
+    return (
+        <div style={containerStyle}>
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label>
+                        Start Date-Time:
+                        <input
+                            type="datetime-local"
+                            value={startDateTime}
+                            onChange={(e) => setStartDateTime(e.target.value)}
+                            style={inputStyle}
+                        />
+                    </label>
+                </div>
+                <div>
+                    <label>
+                        End Date-Time:
+                        <input
+                            type="datetime-local"
+                            value={endDateTime}
+                            onChange={(e) => setEndDateTime(e.target.value)}
+                            style={inputStyle}
+                        />
+                    </label>
+                </div>
+                <button type="submit" style={buttonStyle}>Submit</button>
+            </form>
+        </div>
+    );
+};
+
+export default DateTimeRangePicker;
