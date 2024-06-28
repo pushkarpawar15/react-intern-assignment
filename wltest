@@ -1,0 +1,30 @@
+import React from 'react';
+import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import Watchlist from './Watchlist';
+
+const mockData = [
+  { companyId: 'AAPL', close: 150, change: -1.5, changePercent: -1 },
+  { companyId: 'GOOGL', close: 2800, change: 20, changePercent: 0.72 },
+];
+
+test('renders Watchlist component', () => {
+  render(<Watchlist watchlistData={mockData} setCurrentCompanyId={() => {}} />);
+
+  // Check for table headers
+  expect(screen.getByText('Stock')).toBeInTheDocument();
+  expect(screen.getByText('Last')).toBeInTheDocument();
+  expect(screen.getByText('Change')).toBeInTheDocument();
+  expect(screen.getByText('Change %')).toBeInTheDocument();
+
+  // Check for table data
+  expect(screen.getByText('AAPL')).toBeInTheDocument();
+  expect(screen.getByText('150')).toBeInTheDocument();
+  expect(screen.getByText('-1.5')).toBeInTheDocument();
+  expect(screen.getByText('-1%')).toBeInTheDocument();
+
+  expect(screen.getByText('GOOGL')).toBeInTheDocument();
+  expect(screen.getByText('2800')).toBeInTheDocument();
+  expect(screen.getByText('20')).toBeInTheDocument();
+  expect(screen.getByText('0.72%')).toBeInTheDocument();
+});
