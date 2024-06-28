@@ -1,0 +1,74 @@
+import { render, screen, fireEvent } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import Indicators from './Indicators';
+import { useState } from 'react';
+
+// Mock useState to test component with controlled state
+const mockUseState = (initialState) => {
+    let state = initialState;
+    const setState = (newState) => {
+        state = newState;
+        return [state, setState];
+    };
+    return [state, setState];
+};
+
+describe('Indicators Component', () => {
+    test('renders component correctly', () => {
+        const [selectedIndicators, setSelectedIndicators] = mockUseState([]);
+        render(<Indicators selectedIndicators={selectedIndicators} setSelectedIndicators={setSelectedIndicators} />);
+
+        expect(screen.getByText('rsi')).toBeInTheDocument();
+        expect(screen.getByText('macd')).toBeInTheDocument();
+        // Add more assertions for each indicator
+    });
+
+    test('toggles dropdown visibility', () => {
+        const [selectedIndicators, setSelectedIndicators] = mockUseState([]);
+        const { getByText } = render(<Indicators selectedIndicators={selectedIndicators} setSelectedIndicators={setSelectedIndicators} />);
+
+        const dropdownButton = getByText('Indicators');
+        fireEvent.click(dropdownButton);
+
+        // Assuming you have logic to show/hide dropdown items
+        expect(screen.getByText('rsi')).toBeVisible();
+
+        fireEvent.click(dropdownButton);
+        expect(screen.getByText('rsi')).not.toBeVisible();
+    });
+
+    test('selects and deselects indicators', () => {
+        const [selectedIndicators, setSelectedIndicators] = mockUseState([]);
+        const { getByText } = render(<Indicators selectedIndicators={selectedIndicators} setSelectedIndicators={setSelectedIndicators} />);
+
+        const rsiIndicator = getByText('rsi');
+        fireEvent.click(rsiIndicator);
+        expect(selectedIndicators).toContain('rsi');
+
+        fireEvent.click(rsiIndicator);
+        expect(selectedIndicators).not.toContain('rsi');
+    });
+
+    test('selects all indicators', () => {
+        const [selectedIndicators, setSelectedIndicators] = mockUseState([]);
+        const { getByText } = render(<Indicators selectedIndicators={selectedIndicators} setSelectedIndicators={setSelectedIndicators} />);
+
+        const selectAllButton = getByText('Select All');
+        fireEvent.click(selectAllButton);
+
+        expect(selectedIndicators).toEqual(['rsi', 'macd', 'obv', 'ema_5', 'ema_13', 'ema_26', 'vw']);
+
+        fireEvent.click(selectAllButton);
+        expect(selectedIndicators).toEqual([]);
+    });
+
+    test('clears selection', () => {
+        const [selectedIndicators, setSelectedIndicators] = mockUseState(['rsi', 'macd']);
+        const { getByText } = render(<Indicators selectedIndicators={selectedIndicators} setSelectedIndicators={setSelectedIndicators} />);
+
+        const clearButton = getByText('Clear Selection');
+        fireEvent.click(clearButton);
+
+        expect(selectedIndicators).toEqual([]);
+    });
+});
