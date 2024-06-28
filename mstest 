@@ -1,0 +1,52 @@
+import React from 'react';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom/extend-expect';
+import axios from 'axios';
+import CompanyListComponent from './CompanyListComponent';
+
+// Mocking axios
+jest.mock('axios');
+
+test('fetches and displays company list', async () => {
+  // Arrange
+  const mockResponse = {
+    data: [
+      { id: 1, name: 'Company A' },
+      { id: 2, name: 'Company B' },
+    ],
+  };
+
+  axios.get.mockResolvedValueOnce(mockResponse);
+
+  // Act
+  render(<CompanyListComponent />);
+
+  // Assert
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+  await waitFor(() => {
+    expect(screen.getByText('Company A')).toBeInTheDocument();
+    expect(screen.getByText('Company B')).toBeInTheDocument();
+  });
+
+  // Optional: Verify the axios call
+  expect(axios.get).toHaveBeenCalledWith('http://10.64.0.67:8000/api/companyList');
+});
+
+test('displays error message on fetch failure', async () => {
+  // Arrange
+  axios.get.mockRejectedValueOnce(new Error('Network Error'));
+
+  // Act
+  render(<CompanyListComponent />);
+
+  // Assert
+  expect(screen.getByText('Loading...')).toBeInTheDocument();
+
+  await waitFor(() => {
+    expect(screen.getByText('Error fetching company list')).toBeInTheDocument();
+  });
+
+  // Optional: Verify the axios call
+  expect(axios.get).toHaveBeenCalledWith('http://10.64.0.67:8000/api/companyList');
+});
